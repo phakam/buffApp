@@ -7,12 +7,14 @@ interface InputFieldProps {
   onChangeText: (text: string) => void;
   value: string;
   label: string;
+  maxLength: number;
+  keyboardType: string;
 }
 
 const { width } = Dimensions.get('screen');
 
 const InputField = (props: InputFieldProps) => {
-  const { onChangeText, value, label } = props;
+  const { onChangeText, value, label, maxLength, keyboardType } = props;
 
   return (
     <TextInput
@@ -23,6 +25,8 @@ const InputField = (props: InputFieldProps) => {
       onChangeText={onChangeText}
       style={styles.inputStyle}
       underlineColor="transparent"
+      maxLength={maxLength}
+      keyboardType={keyboardType}
     />
   );
 };

@@ -33,16 +33,6 @@ const EditModal = (props: SneakerViewProps) => {
     selectedTable,
   } = props;
 
-  const [internalIsOpen, setInternalIsOpen] = useState(isOpen);
-
-  useEffect(() => {
-    if (isOpen) {
-      setInternalIsOpen(isOpen);
-    } else {
-      setInternalIsOpen(isOpen);
-    }
-  }, [isOpen]);
-
   const closeModal = () => {
     if (onClose) {
       onClose();
@@ -50,7 +40,7 @@ const EditModal = (props: SneakerViewProps) => {
   };
 
   return (
-    <RNModal visible={internalIsOpen} transparent animationType="fade">
+    <RNModal visible={isOpen} transparent animationType="fade">
       <TouchableWithoutFeedback onPressOut={closeModal}>
         <View style={styles.overlayView}>
           <TouchableWithoutFeedback>

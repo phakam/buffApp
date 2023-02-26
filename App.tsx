@@ -24,7 +24,6 @@ const App = () => {
           backgroundColor={backgroundStyle.backgroundColor}
         />
         <Tab.Navigator
-          initialRouteName="Display"
           screenOptions={() => styles.tabStyle}>
           <Tab.Screen
             name="Home"

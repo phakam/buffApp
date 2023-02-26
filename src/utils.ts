@@ -25,10 +25,10 @@ export const getContactTable = async () => {
   return token ? JSON.parse(token) : {};
 };
 
-export const setDefaultTable = async () => {
-  const token = await AsyncStorage.getItem('nameTable');
-  const token2 = await AsyncStorage.getItem('contactTable');
-  if (!token) {
+export const getNameData = async () => {
+  const asyncNameData = await AsyncStorage.getItem('nameTable');
+
+  if (!asyncNameData) {
     const nameTableObject = {
       '1': {name: 'Michael', surname: 'Baker'},
     };
@@ -36,7 +36,26 @@ export const setDefaultTable = async () => {
     const jsonValue = JSON.stringify(nameTableObject);
     await AsyncStorage.setItem('nameTable', jsonValue);
   }
-  if (!token2) {
+
+}
+
+export const checkAndSetNameData = async () => {
+  const asyncNameData = await AsyncStorage.getItem('nameTable');
+
+  if (!asyncNameData) {
+    const nameTableObject = {
+      '1': {name: 'Michael', surname: 'Baker'},
+    };
+
+    const jsonValue = JSON.stringify(nameTableObject);
+    await AsyncStorage.setItem('nameTable', jsonValue);
+  }
+}
+
+export const checkAndSetContactData = async () => {
+  const asyncContactData = await AsyncStorage.getItem('contactTable');
+
+  if (!asyncContactData) {
     const contactTableObject = {
       '1': {email: 'michael@test.com', cell_no: '0825558364'},
     };
@@ -44,8 +63,12 @@ export const setDefaultTable = async () => {
     const jsonValue = JSON.stringify(contactTableObject);
     await AsyncStorage.setItem('contactTable', jsonValue);
   }
+}
+
+export const clearContactData = async () => {
+  await AsyncStorage.removeItem('contactTable')
 };
 
-export const clearData = (): void => {
-  void AsyncStorage.clear();
+export const clearNameData = async () => {
+  await AsyncStorage.removeItem('nameTable')
 };

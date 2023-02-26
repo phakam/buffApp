@@ -1,10 +1,24 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import EditModal from '../../components/editModal';
-import Header from '../../components/Header';
-import NameBlock from '../../components/NameBlock';
-import { getContactTable, getNameTable, setTableData } from '../../utils';
+import {
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions
+} from 'react-native';
+import EditModal from '../../components/EditModal';
+import BlockList from '../../components/BlockList';
+import {
+  getContactTable,
+  getNameTable,
+  setTableData,
+  clearNameData,
+  clearContactData,
+  checkAndSetContactData,
+  checkAndSetNameData
+} from '../../utils';
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import colors from '../../themes/colors';
 
 const Display = () => {
   const [nameData, setNameData] = useState({});
@@ -14,6 +28,12 @@ const Display = () => {
   const [editSecField, setEditSecField] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedTable, setSelectedTable] = useState('');
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'first', title: 'Name Table' },
+    { key: 'second', title: 'Contact Table' }
+  ]);
+  const layout = useWindowDimensions();
 
   const readData = async () => {
     const nData = await getNameTable();
@@ -30,20 +50,30 @@ const Display = () => {
   useFocusEffect(
     useCallback(() => {
       readData();
-    }, []),
+    }, [])
   );
 
   useEffect(() => {
     readData();
   }, []);
 
-  const deleteItem = (name, index) => {
+  const deleteItem = async (name, index) => {
     if (name === 'contactTable') {
       delete contactData[index];
-      setTableData(name, contactData);
+
+      if (!Object.keys(contactData).length) {
+        await clearContactData();
+      } else {
+        setTableData(name, contactData);
+      }
     } else {
       delete nameData[index];
-      setTableData(name, nameData);
+
+      if (!Object.keys(nameData).length) {
+        await clearNameData();
+      } else {
+        setTableData(name, nameData);
+      }
     }
     readData();
   };
@@ -67,20 +97,19 @@ const Display = () => {
       if (header === 'contactTable') {
         contactData[selectedIndex] = {
           email: editFirstField,
-          cell_no: editSecField,
+          cell_no: editSecField
         };
 
         await setTableData(header, contactData);
       } else {
         nameData[selectedIndex] = {
           name: editFirstField,
-          surname: editSecField,
+          surname: editSecField
         };
         await setTableData(header, nameData);
       }
-      // clearData()
-      setEditFirstField('');
-      setEditSecField('');
+
+      setOpenModal(false);
       readData();
     }
   };
@@ -97,6 +126,41 @@ const Display = () => {
     updateDetails(contactData[item], 'contactTable');
   };
 
+  const setAndGetContactData = async () => {
+    await checkAndSetContactData();
+    readData();
+  };
+
+  const setAndGetNameData = async () => {
+    await checkAndSetNameData();
+    readData();
+  };
+
+  const FirstRoute = () => (
+    <BlockList
+      data={nameData}
+      editOnPress={onNameEdit}
+      deleteOnPress={deleteItem}
+      type="nameTable"
+      buttonOnPress={setAndGetNameData}
+    />
+  );
+
+  const SecondRoute = () => (
+    <BlockList
+      data={contactData}
+      editOnPress={onContactEdit}
+      deleteOnPress={deleteItem}
+      type="contactTable"
+      buttonOnPress={setAndGetContactData}
+    />
+  );
+
+  const renderScene = SceneMap({
+    first: FirstRoute,
+    second: SecondRoute
+  });
+
   return (
     <View style={styles.container}>
       <EditModal
@@ -109,48 +173,24 @@ const Display = () => {
         onSave={() => onSave(selectedTable)}
         onClose={() => setOpenModal(false)}
       />
-      <View style={styles.flex}>
-        {<Header text="Name Table" />}
-        <View style={styles.flatlistView}>
-          {nameData && Object.keys(nameData).length ? (
-            <FlatList
-              data={Object.keys(nameData)}
-              renderItem={({ item, index }) => {
-                return (
-                  <NameBlock
-                    name={nameData[item].name}
-                    surname={nameData[item].surname}
-                    index={index}
-                    editOnPress={() => onNameEdit(item, index)}
-                    onPress={() => deleteItem('nameTable', item)}
-                  />
-                );
-              }}
-              keyExtractor={(item, index) => String(index)}
-            />
-          ) : null}
-        </View>
-      </View>
-      {<Header text="Contact Table" />}
-      <View style={styles.flatlistView}>
-        {contactData && Object.keys(contactData).length ? (
-          <FlatList
-            data={Object.keys(contactData)}
-            renderItem={({ item, index }) => {
-              return (
-                <NameBlock
-                  cellNo={contactData[item].cell_no}
-                  email={contactData[item].email}
-                  index={index}
-                  editOnPress={() => onContactEdit(item, index)}
-                  onPress={() => deleteItem('contactTable', item)}
-                />
-              );
-            }}
-            keyExtractor={(item, index) => String(index)}
+      <TabView
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: layout.width }}
+        renderTabBar={(props) => (
+          <TabBar
+            {...props}
+            renderLabel={({ route, color }) => (
+              <Text style={styles.tabText}>
+                {route.title}
+              </Text>
+            )}
+            indicatorStyle={{ backgroundColor: colors.blue }}
+            style={{ backgroundColor: colors.background }}
           />
-        ) : null}
-      </View>
+        )}
+      />
     </View>
   );
 };
@@ -158,16 +198,26 @@ const Display = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#161722',
+    backgroundColor: colors.background
   },
   flex: {
-    flex: 1,
+    flex: 1
   },
   flatlistView: {
     flex: 0.8,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
+  nameTextStyle: {
+    fontSize: 20,
+    fontFamily: 'Montserrat-Regular',
+    color: '#cacde8'
+  },
+  tabText: {
+    color: '#cacde8',
+    margin: 8,
+    fontFamily: 'Montserrat-SemiBold'
+  }
 });
 
 export default Display;

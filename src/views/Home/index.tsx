@@ -26,7 +26,6 @@ const Home = () => {
     setData(holder);
   };
 
-  console.log("ddd", data)
 
   return (
     <SafeAreaView style={styles.container}>
