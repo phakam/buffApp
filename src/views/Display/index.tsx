@@ -6,7 +6,7 @@ import {
   View,
   useWindowDimensions
 } from 'react-native';
-import EditModal from '../../components/EditModal';
+import EditModal from '../../components/editModal';
 import BlockList from '../../components/BlockList';
 import {
   getContactTable,
