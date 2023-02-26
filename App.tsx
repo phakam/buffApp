@@ -13,7 +13,7 @@ const App = () => {
 
   const backgroundStyle = {
     backgroundColor: '#161722',
-    flex: 1,
+    flex: 1
   };
 
   return (
@@ -23,13 +23,12 @@ const App = () => {
           barStyle={'light-content'}
           backgroundColor={backgroundStyle.backgroundColor}
         />
-        <Tab.Navigator
-          screenOptions={() => styles.tabStyle}>
+        <Tab.Navigator screenOptions={() => styles.tabStyle}>
           <Tab.Screen
             name="Home"
             component={Home}
             options={{
-              tabBarIcon: TabBarIcon('format-list-bulleted'),
+              tabBarIcon: TabBarIcon('format-list-bulleted')
             }}
           />
           <Tab.Screen
@@ -37,14 +36,14 @@ const App = () => {
             component={Display}
             options={{
               tabBarIcon: TabBarIcon('table-edit'),
-              headerShown: false,
+              headerShown: false
             }}
           />
           <Tab.Screen
             name="Capture"
             component={Capture}
             options={{
-              tabBarIcon: TabBarIcon('database-plus-outline'),
+              tabBarIcon: TabBarIcon('database-plus-outline')
             }}
           />
         </Tab.Navigator>
@@ -57,24 +56,28 @@ const styles = StyleSheet.create({
   tabStyle: {
     tabBarActiveTintColor: '#3a7bfd',
     tabBarInactiveTintColor: '#e4e5f1',
+    tabBarLabelStyle: {
+      fontFamily: 'Montserrat-Regular'
+    },
+
     tabBarStyle: {
       backgroundColor: '#161722',
-      borderTopWidth: 0,
+      borderTopWidth: 0
     },
-    headerShown: false,
+    headerShown: false
   },
   sectionTitle: {
     fontSize: 24,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   sectionDescription: {
     marginTop: 8,
     fontSize: 18,
-    fontWeight: '400',
+    fontWeight: '400'
   },
   highlight: {
-    fontWeight: '700',
-  },
+    fontWeight: '700'
+  }
 });
 
 export default App;
