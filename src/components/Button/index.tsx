@@ -6,21 +6,21 @@ interface ButtonProps {
   text: string;
   onPress: () => void;
   textStyle: any;
+  style: any;
 }
 
 const Button = (props: ButtonProps) => {
-  const { text, onPress, active = false, textStyle } = props;
+  const { text, onPress, textStyle, style } = props;
   return (
     <TouchableOpacity
       style={[
         styles.buttonStyle,
-        { backgroundColor: active ? colors.blue : '#ffffff' },
+        style
       ]}
       onPress={onPress}>
       <Text
         style={[
           styles.text,
-          { color: active ? 'white' : '#000000' },
           textStyle,
         ]}>
         {text}
@@ -35,11 +35,12 @@ const styles = StyleSheet.create({
     width: 130,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 25,
+    borderRadius: 10,
     backgroundColor: colors.blue,
   },
   text: {
     fontFamily: 'Montserrat-Medium',
+    color: "#ffffff"
   },
 });
 

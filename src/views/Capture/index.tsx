@@ -1,8 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
-import Button from '../../components/Button';
-import InputField from '../../components/InputField';
+import Form from '../../components/Form';
 import { getContactTable, getNameTable, setTableData } from '../../utils';
 
 const { width } = Dimensions.get('screen');
@@ -10,9 +9,10 @@ const { width } = Dimensions.get('screen');
 const Capture = () => {
   const [firstField, setFirstField] = useState('');
   const [secondField, setSecondField] = useState('');
-  const [isNameTable, setIsNameTable] = useState(false);
-  const [nameData, setNameData] = useState({});
-  const [contactData, setContactData] = useState({});
+  const [isNameTable, setIsNameTable] = useState(true);
+  const [nameData, setNameData] = useState(null);
+  const [contactData, setContactData] = useState(null);
+  const [isEnabled, setIsEnabled] = useState(false);
 
   const readData = async () => {
     const nData = await getNameTable();
@@ -56,43 +56,29 @@ const Capture = () => {
         };
         await setTableData(isTable, nameData);
       }
-      // clearData()
       setFirstField('');
       setSecondField('');
       readData();
     }
   };
 
+  const toggleSwitch = () => {
+    setIsNameTable(!isNameTable)
+    setIsEnabled(previousState => !previousState);
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.topView}>
-        <View style={styles.headerButtonsView}>
-          <Button
-            text={'Name Table'}
-            active={isNameTable === false}
-            onPress={() => setIsNameTable(false)}
-          />
-          <Button
-            text={'Contact Table'}
-            active={isNameTable === true}
-            onPress={() => setIsNameTable(true)}
-          />
-        </View>
-        <InputField
-          onChangeText={(text) => setFirstField(text)}
-          label={`${!isNameTable ? 'Name' : 'Email'}`}
-          value={firstField}
-        />
-
-        <InputField
-          onChangeText={(text) => setSecondField(text)}
-          label={`${!isNameTable ? 'Surname' : 'Cell no.'}`}
-          value={secondField}
-        />
-      </View>
-      <View style={styles.bottomView}>
-        <Button text={'SAVE'} onPress={saveDetails} />
-      </View>
+      <Form
+        switchValue={isEnabled}
+        toggleSwitch={toggleSwitch}
+        secondField={secondField}
+        firstField={firstField}
+        setFirstField={setFirstField}
+        setSecondField={setSecondField}
+        buttonOnPress={saveDetails}
+        isNameTable={isNameTable}
+        buttonText='SAVE'/>
     </View>
   );
 };
@@ -114,6 +100,7 @@ const styles = StyleSheet.create({
     width: width,
     justifyContent: 'space-around',
     flexDirection: 'row',
+    alignItems: 'center'
   },
   topView: {
     flex: 1,
@@ -124,6 +111,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  headerText : {
+    fontFamily: 'Montserrat-SemiBold',
+    color: '#ffffff'
+  }
 });
 
 export default Capture;

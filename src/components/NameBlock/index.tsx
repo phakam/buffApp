@@ -11,7 +11,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const {width} = Dimensions.get('screen');
 const NameBlock = props => {
   const {
-    onPress,
     name,
     surname,
     index,
@@ -21,17 +20,15 @@ const NameBlock = props => {
     editOnPress,
   } = props;
   return (
-    <View onPress={onPress} style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.numView}></View>
       <View style={styles.nameView}>
         <Text style={styles.nameTextStyle}>
-          {name ? name : email} {surname ? surname : cellNo}
+          {name ? name : email || ''} {surname ? surname : cellNo || ''}
         </Text>
       </View>
       <TouchableOpacity style={styles.numView} onPress={editOnPress}>
-        <Text style={{fontFamily: 'Montserrat-Medium', color: '#cacde8'}}>
-          EDIT
-        </Text>
+        <Icon name="pencil-outline" size={30} color="#cacde8" />
       </TouchableOpacity>
       <TouchableOpacity style={styles.numView} onPress={deleteOnPress}>
         <Icon name="trash-can-outline" size={30} color="#cacde8" />
@@ -62,6 +59,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Montserrat-Regular',
     color: '#cacde8',
+    textAlign: 'center'
   },
   numView: {
     flex: 0.2,
