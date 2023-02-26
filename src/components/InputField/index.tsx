@@ -20,7 +20,7 @@ const InputField = (props: InputFieldProps) => {
     <TextInput
       label={label}
       value={value}
-      mode="outlined"
+      mode="flat"
       activeOutlineColor={colors.blue}
       onChangeText={onChangeText}
       style={styles.inputStyle}
